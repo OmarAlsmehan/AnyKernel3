@@ -22,27 +22,21 @@ supported.vendorpatchlevels=
 
 ### AnyKernel install
 # boot shell variables
-BLOCK=boot;
+BLOCK=/dev/block/bootdevice/by-name/boot;
 IS_SLOT_DEVICE=auto;
 NO_BLOCK_DISPLAY=1;
 
-# import functions/variables and setup patching - see for reference (DO NOT REMOVE)
-. tools/ak3-core.sh;
+ui_print "-Flashing boot.img"
+write_raw_image boot.img "$BLOCK"
 
-# boot install
-dump_boot;
+ui_print "-Flashing vendor_boot.img"
+write_raw_image vendor_boot.img "/dev/block/bootdevice/by-name/vendor_boot"
 
-write_boot;
-## end boot install
+ui_print "-Flashing dtbo.img"
+write_raw_image dtbo.img "/dev/block/bootdevice/by-name/dtbo"
 
-# vendor_boot shell variables
-BLOCK=vendor_boot
+ui_print""
+ui_print "Flashing completed."
+ui_print ""
 
-# reset for vendor_boot patching
-reset_ak;
-
-# vendor_boot install
-split_boot;
-
-flash_boot;
-## end vendor_boot install
+exit 0
