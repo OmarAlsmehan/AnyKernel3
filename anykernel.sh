@@ -15,7 +15,7 @@ do.cleanup=1
 device.name1=a73xq
 device.name2=m52xq
 device.name3=a52sxq
-supported.versions=12-16
+supported.versions=15-16
 supported.patchlevels=
 supported.vendorpatchlevels=
 '; } # end properties
@@ -41,3 +41,25 @@ dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_b
 
 write_boot; # use flash_boot to skip ramdisk repack, e.g. for devices with init_boot ramdisk
 ## end boot install
+
+vendor_boot_attributes() {
+set_perm_recursive 0 0 755 644 $RAMDISK/*;
+set_perm_recursive 0 0 750 750 $RAMDISK/init* $RAMDISK/sbin;
+}
+# end attributes
+
+## vendor_boot shell variables
+BLOCK=vendor_boot;
+IS_SLOT_DEVICE=0;
+RAMDISK_COMPRESSION=auto;
+PATCH_VBMETA_FLAG=auto;
+
+# reset for vendor_boot patching
+reset_ak;
+
+# vendor_boot install
+#dump_boot; # use split_boot to skip ramdisk unpack, e.g. for dtb on devices with hdr v4 but no vendor_kernel_boot
+split_boot;
+
+#write_boot; # use flash_boot to skip ramdisk repack, e.g. for dtb on devices with hdr v4 but no vendor_kernel_boot
+flash_boot;
