@@ -21,22 +21,23 @@ supported.vendorpatchlevels=
 '; } # end properties
 
 ### AnyKernel install
+## boot files attributes
+boot_attributes() {
+set_perm_recursive 0 0 755 644 $RAMDISK/*;
+set_perm_recursive 0 0 750 750 $RAMDISK/init* $RAMDISK/sbin;
+} # end attributes
+
 # boot shell variables
 BLOCK=/dev/block/bootdevice/by-name/boot;
-IS_SLOT_DEVICE=auto;
-NO_BLOCK_DISPLAY=1;
+IS_SLOT_DEVICE=0;
+RAMDISK_COMPRESSION=auto;
+PATCH_VBMETA_FLAG=auto;
 
-ui_print "-Flashing boot.img"
-write_raw_image boot.img "$BLOCK"
+# import functions/variables and setup patching - see for reference (DO NOT REMOVE)
+. tools/ak3-core.sh;
 
-ui_print "-Flashing vendor_boot.img"
-write_raw_image vendor_boot.img "/dev/block/bootdevice/by-name/vendor_boot"
+# boot install
+dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
 
-ui_print "-Flashing dtbo.img"
-write_raw_image dtbo.img "/dev/block/bootdevice/by-name/dtbo"
-
-ui_print""
-ui_print "Flashing completed."
-ui_print ""
-
-exit 0
+write_boot; # use flash_boot to skip ramdisk repack, e.g. for devices with init_boot ramdisk
+## end boot install
